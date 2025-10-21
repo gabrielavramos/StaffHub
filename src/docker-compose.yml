@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: staffhub-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: teste_user
+      MYSQL_DATABASE: staffhub
+      MYSQL_USER: teste_user
+      MYSQL_PASSWORD: senha123
+    ports:
+      - "3306:3306"
+    networks:
+      - staffhub-network
+
+  app:
+    build: .
+    container_name: staffhub-app
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/rh_database?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: teste_user
+      SPRING_DATASOURCE_PASSWORD: senha123
+    networks:
+      - staffhub-network
+
+networks:
+  staffhub-network:
+    driver: bridge
